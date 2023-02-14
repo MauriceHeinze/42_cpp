@@ -25,7 +25,7 @@ Animal& Animal::operator=( const Animal &animalOriginal ) {
 	return *this;
 }
 
-Animal::~Animal()
+Animal::~Animal( void )
 {
 	std::cout << "Animal destructed!" << std::endl;
 }

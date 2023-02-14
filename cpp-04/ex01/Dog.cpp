@@ -3,10 +3,12 @@
 Dog::Dog( void ) : Animal("Dog")
 {
 	std::cout << "Dog constructed!" << std::endl;
+	this->ideas = new Brain();
 }
 
-Dog::~Dog()
+Dog::~Dog( void )
 {
+	delete this->ideas;
 	std::cout << "Dog destructed!" << std::endl;
 }
 
@@ -19,7 +21,10 @@ Dog::Dog( const Dog& dogOriginal )
 Dog& Dog::operator=( const Dog &dogOriginal ) {
 	std::cout << "Assignment operator called for Dog" << std::endl;
 	if (this != &dogOriginal)
-		*this = dogOriginal;
+	{
+		this->type = dogOriginal.type;
+		this->ideas = new Brain( *dogOriginal.ideas );
+	}
 	return *this;
 }
 

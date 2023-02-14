@@ -3,6 +3,7 @@
 Cat::Cat( void ) : Animal("Cat")
 {
 	std::cout << "Cat constructed!" << std::endl;
+	this->ideas = new Brain();
 }
 
 Cat::Cat( const Cat& catOriginal )
@@ -20,6 +21,7 @@ Cat& Cat::operator=( const Cat &catOriginal ) {
 
 Cat::~Cat()
 {
+	delete this->ideas;
 	std::cout << "Cat destructed!" << std::endl;
 }
 
