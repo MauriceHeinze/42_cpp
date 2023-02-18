@@ -9,7 +9,7 @@ class Fixed
 		int					fixedPointValue;
 		static const int	fractionalBits = 8;
 	public:
-		Fixed();
+		Fixed( void );
 		Fixed(const int fixedNumber);
 		Fixed(const float fixedNumber);
 		Fixed(const Fixed &fixedNumber);
@@ -32,7 +32,7 @@ class Fixed
 		Fixed operator ++( int );
 		Fixed& operator --();
 		Fixed operator --( int );
-		~Fixed();
+		~Fixed( void );
 
 		// MIN && MAX
 		static Fixed&			min( Fixed &a, Fixed &b );

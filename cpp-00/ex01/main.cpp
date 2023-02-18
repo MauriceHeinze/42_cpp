@@ -24,7 +24,7 @@ int main(void)
 			else
 				std::cout << "\033[31m" << "No contacts available! " << "\033[0m" << "Use ADD to add a contact or EXIT to exit the program.\n";
 		}
-		else if (command.compare("EXIT") == 0)
+		else if (command.compare("EXIT") == 0 || cin.eof())
 			break ;
 		else
 			std::cout << "\033[31m" << "Invalid command! " << "\033[0m" << "Enter either ADD, SEARCH or EXIT.\n";
