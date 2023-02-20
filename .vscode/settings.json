@@ -58,6 +58,10 @@
 		"deque": "cpp",
 		"fstream": "cpp",
 		"stack": "cpp",
-		"filesystem": "cpp"
+		"filesystem": "cpp",
+		"list": "cpp",
+		"numeric": "cpp",
+		"random": "cpp",
+		"vector": "cpp"
 	}
 }

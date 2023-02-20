@@ -1,23 +1,5 @@
 #include "Base.hpp"
 
-Base::Base()
-{
-	std::cout << "Base constructed!" << std::endl;
-}
-
-Base::Base( const Base& src )
-{
-	std::cout << "Copy operator called for Base" << std::endl;
-	*this = src;
-}
-
-Base& Base::operator=( const Base &src ) {
-	std::cout << "Assignment operator called for Base" << std::endl;
-	if (this != &src)
-		*this = src;
-	return *this;
-}
-
 Base::~Base( void )
 {
 	std::cout << "Base destructed!" << std::endl;
@@ -50,22 +32,23 @@ void	identify(Base* p)
 
 void	identify(Base& p)
 {
+	Base	&tmp = (Base &)"Some_memory_address";
 	try
 	{
-		A& a = dynamic_cast< A& >( p );
+		tmp = dynamic_cast< A& >( p );
 		std::cout << "It's type A!" << std::endl;
 	}
 	catch( const std::exception& e ) {}
 	try
 	{
-		A& a = dynamic_cast< A& >( p );
-		std::cout << "It's type A!" << std::endl;
+		tmp = dynamic_cast< B& >( p );
+		std::cout << "It's type B!" << std::endl;
 	}
 	catch( const std::exception& e ) {}
 	try
 	{
-		A& a = dynamic_cast< A& >( p );
-		std::cout << "It's type A!" << std::endl;
+		tmp = dynamic_cast< C& >( p );
+		std::cout << "It's type C!" << std::endl;
 	}
 	catch( const std::exception& e ) {}
 }

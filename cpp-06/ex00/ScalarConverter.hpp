@@ -7,10 +7,11 @@ class ScalarConverter
 {
 	private:
 		const std::string	original;
-		unsigned char		c;
+		char				c;
 		int					i;
 		float				f;
 		double				d;
+		bool				error;
 	public:
 		ScalarConverter();
 		ScalarConverter( const std::string nbr );
@@ -18,7 +19,7 @@ class ScalarConverter
 		ScalarConverter& operator=( const ScalarConverter &src );
 		~ScalarConverter( void );
 
-		void	convert( void );
+		bool	convert( void );
 
 		/* UTILS */
 
@@ -26,6 +27,7 @@ class ScalarConverter
 		void	convertInt( void );
 		void	convertFloat( void );
 		void	convertDouble( void );
+		void	convertShit( void );
 
 		std::string	defineType( void );
 
@@ -33,12 +35,16 @@ class ScalarConverter
 		bool	checkInt( void );
 		bool	checkFloat( void );
 		bool	checkDouble( void );
+		bool	shitCheck( void );
 
-		unsigned char	getChar( void );
+		char			getChar( void );
 		int				getInt( void );
 		float			getFloat( void );
 		double			getDouble( void );
 		std::string		getOriginal( void );
+		bool			getError( void );
+
+		bool 			printInfNan( void );
 };
 
 std::ostream & operator<<( std::ostream & o, ScalarConverter & i );
