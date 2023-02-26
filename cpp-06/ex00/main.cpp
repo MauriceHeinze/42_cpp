@@ -9,6 +9,5 @@ int main(int argc, char *argv[])
 		ScalarConverter nbr(argv[1]);
 		std::cout << nbr << std::endl;
 	}
-
 	return (0);
 }
