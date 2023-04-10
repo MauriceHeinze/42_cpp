@@ -1,45 +1,41 @@
 #include "Fixed.hpp"
 
-// constructor inits fixed point value to zero
-Fixed::Fixed( void )
-{
+Fixed::Fixed() {
 	std::cout << "Default constructor called" << std::endl;
+	// Constructor that initializes fixed point value to zero
 	this->fixedPointValue = 0;
-
 }
 
-// copies Fixed class instance
-Fixed::Fixed( const Fixed &fixedNumber )
-{
+Fixed::Fixed(const Fixed &fixedNumber) {
 	std::cout << "Copy constructor called" << std::endl;
-	this->setRawBits(fixedNumber.getRawBits());
+	// Copy constructor that copies Fixed class instance
+	// this->setRawBits(fixedNumber.getRawBits());
+	this->fixedPointValue = fixedNumber.getRawBits();
 }
 
-// defines how to act when = operator is used
-// (if left is not equal to right, assign value and then return)
-Fixed& Fixed::operator=( const Fixed &fixedNumber )
-{
+Fixed& Fixed::operator=(const Fixed &fixedNumber) {
 	std::cout << "Copy assignment operator called" << std::endl;
-	if (this != &fixedNumber)
+	// Copy assignment operator that defines how to act when = operator is used
+	// If left is not equal to right, assign value and then return
+	if (this != &fixedNumber) {
 		this->fixedPointValue = fixedNumber.getRawBits();
+	}
 	return *this;
 }
 
-Fixed::~Fixed( void )
-{
+Fixed::~Fixed() {
+	// Destructor that is called when the object is destroyed
 	std::cout << "Destructor called" << std::endl;
 }
 
-// defines the position of the fixed point as integer
-void Fixed::setRawBits( int const raw )
-{
-	// std::cout << "setRawBits member function called" << std::endl;
+void Fixed::setRawBits(int const raw) {
+	std::cout << "setRawBits member function called" << std::endl;
+	// Sets the position of the fixed point as integer
 	this->fixedPointValue = raw;
 }
 
-// returns the position of the fixed point as integer
-int Fixed::getRawBits( void ) const
-{
+int Fixed::getRawBits() const {
 	std::cout << "getRawBits member function called" << std::endl;
+	// Returns the position of the fixed point as integer
 	return (this->fixedPointValue);
 }
