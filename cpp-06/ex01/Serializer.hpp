@@ -12,16 +12,15 @@ typedef struct Data
 class Serializer
 {
 	private:
-		const std::string	original;
-	public:
+		static std::string	original;
 		Serializer();
 		Serializer( const std::string nbr );
 		Serializer( const Serializer &src );
 		Serializer& operator=( const Serializer &src );
 		~Serializer( void );
-
-		uintptr_t	serialize(Data *ptr);
-		Data 		*deserialize(uintptr_t raw);
+	public:
+		static uintptr_t	serialize(Data *ptr);
+		static Data 		*deserialize(uintptr_t raw);
 };
 
 #endif

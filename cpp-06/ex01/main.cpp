@@ -8,11 +8,10 @@ void	printData(Data *data) {
 int main ()
 {
 	std::cout << "\033[32m--------------- Construct ---------------\033[0m" << std::endl;
-	Serializer	serializer;
 	Data		*data;
 
 	data = new Data;
-	data->email = "michal.jackson@live.com";
+	data->email = "michael.jackson@gmail.com";
 	data->password = "hehe!";
 
 	std::cout << "\033[32m--------------- Not serialized yet ---------------\033[0m" << std::endl;
@@ -23,8 +22,8 @@ int main ()
 	Data		*dataDeserialized;
 
 	std::cout << "\033[32m--------------- Serialized and deserialized! ---------------\033[0m" << std::endl;
-	dataSerialized = serializer.serialize(data);
-	dataDeserialized = serializer.deserialize(dataSerialized);
+	dataSerialized = Serializer::serialize(data);
+	dataDeserialized = Serializer::deserialize(dataSerialized);
 	printData(dataDeserialized);
 
 	std::cout << "\033[32m--------------- Destruct ---------------\033[0m" << std::endl;

@@ -12,7 +12,7 @@ class ScalarConverter
 		static float			f;
 		static double			d;
 		static bool				error;
-		/* UTILS */
+
 		static std::string		defineType( void );
 
 		static void			convertChar( void );
@@ -29,13 +29,13 @@ class ScalarConverter
 		static bool			shitCheck( void );
 
 		static char			getChar( void );
-		static int				getInt( void );
-		static float			getFloat( void );
-		static double			getDouble( void );
-		static std::string		getOriginal( void );
+		static int			getInt( void );
+		static float		getFloat( void );
+		static double		getDouble( void );
+		static std::string	getOriginal( void );
 		static bool			getError( void );
 
-		static bool 			printInfNan( void );
+		static bool 		printInfNan( void );
 
 		ScalarConverter();
 		ScalarConverter( const std::string nbr );

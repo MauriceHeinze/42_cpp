@@ -40,9 +40,11 @@ ScalarConverter::~ScalarConverter( void )
 bool	ScalarConverter::convert( std::string nbr )
 {
 	ScalarConverter::original = nbr;
+
 	try
 	{
-		if (nbr.find_first_not_of("+-0123456789.f") != std::string::npos)
+
+		if (ScalarConverter::defineType() != "shit" && nbr.find_first_not_of("+-0123456789.f") != std::string::npos)
 		{
 			ScalarConverter::error = true;
 			std::cerr << "\nError: Invalid input!" << '\n';
@@ -56,6 +58,11 @@ bool	ScalarConverter::convert( std::string nbr )
 			ScalarConverter::convertFloat();
 		else if (ScalarConverter::defineType() == "double")
 			ScalarConverter::convertDouble();
+		else if (ScalarConverter::defineType() == "shit")
+		{
+			ScalarConverter::printInfNan();
+			return (true);
+		}
 	}
 	catch(const std::exception& e)
 	{
