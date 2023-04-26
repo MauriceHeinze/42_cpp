@@ -15,8 +15,7 @@ int main(int argc, char *argv[])
 	std::ifstream priceFile("data.csv");
     std::ifstream inputFile(argv[1]);
 
-	createPriceDB(priceFile);
-	createAmountDB(inputFile);
+	printResult(priceFile, inputFile);
 	
 	return 0;
 }
