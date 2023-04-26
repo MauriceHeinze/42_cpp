@@ -99,6 +99,52 @@ void	createAmountDB( std::ifstream &fileName )
 	// std::cout << amountDB[20150713] << std::endl;
 }
 
+int		getExchangerate(int date)
+{
+    std::map<int, float>::iterator it = priceDB.lower_bound(date);
+
+    if (it == priceDB.end())
+        it--; // the key is greater than all the keys in the map
+    else if (it != priceDB.begin() && date - (*(--it)).first < it->first - date)
+        it--; // the key is closer to the previous key
+    return (it->first);
+}
+
+void	getTradeVolume( std::ifstream &fileName, float volume )
+{
+	std::string	tmp;
+	std::string	date;
+	int			dateInt;
+	std::string	amount;
+	int			delimiter;
+
+	int			exchangeRate;
+
+	std::cout << "Hallo" << std::endl;
+	while (getline(fileName, tmp))
+	{
+
+		delimiter = tmp.find(" | ");
+		date = tmp.substr(0, delimiter);
+		amount = tmp.substr(delimiter + 3);
+
+		if (checkDate(date) == false && checkPrice(amount) == false)
+			std::cout << "Error: Invalid date and price!" << std::endl;
+		else if (checkDate(date) == false)
+			std::cout << "Error: Invalid date!" << std::endl;
+		else if (checkPrice(amount) == false) // in this case the traded amount
+			std::cout << "Error: Invalid volume!" << std::endl;
+		else // convert to int, so we can search container properly
+		{
+			date.erase(4, 1);
+			date.erase(6, 1);
+			dateInt = std::atoi(date.c_str());
+			exchangeRate = getExchangerate(dateInt);
+			std::cout << (exchangeRate * volume)  << std::endl;
+		}
+	}
+}
+
 void	printResult( std::ifstream &priceFileName, std::ifstream &amountFileName  )
 {
 	// float	price;
@@ -115,7 +161,9 @@ void	printResult( std::ifstream &priceFileName, std::ifstream &amountFileName  )
 
 	for (size_t k = 0; k < amountDB.size(); k++)
 	{
-		std::cout << (amountDB[20150713] * priceDB[20150713]) << std::endl;
+		float volume = amountDB[20150713];
+		getTradeVolume(priceFileName, volume);
+		// std::cout << getTradeVolume(priceFileName, volume) << std::endl;
 		// if (std::stof(amount) < 0.0 || std::stof(amount) > 1000.0)
 		// 	std::cout << "Rate out of range" << std::endl;
 	}
