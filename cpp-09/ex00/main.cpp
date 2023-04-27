@@ -11,11 +11,16 @@ int main(int argc, char *argv[])
 	// 		- if date does not exist in db, find closest date. Use the lower and not the upper one.
 	// 5. else throw error that format is invalid
 
-	(void) argc;
-	std::ifstream priceFile("data.csv");
-    std::ifstream inputFile(argv[1]);
+	if (argc != 2)
+	{
+		std::cout << "Please input file!" << std::endl;
+	}
+	else
+	{
+		std::ifstream priceFile("data.csv");
+		std::ifstream inputFile(argv[1]);
+		printResult(priceFile, inputFile);
+	}
 
-	printResult(priceFile, inputFile);
-	
 	return 0;
 }

@@ -1,7 +1,7 @@
 #include "BitcoinExchange.hpp"
 
-std::map<int, float> priceDB;
-std::map<int, float> amountDB;
+std::map<int, double> priceDB;
+std::map<int, double> amountDB;
 
 // struct tm date;
 
@@ -62,7 +62,7 @@ void	createPriceDB( std::ifstream &fileName )
 			date.erase(4, 1);
 			date.erase(6, 1);
 			dateInt = std::atoi(date.c_str());
-			priceDB[dateInt] = std::stof(price);
+			priceDB[dateInt] = std::stod(price);
 		}
 	}
 	// std::cout << priceDB[20150713] << std::endl;
@@ -93,24 +93,24 @@ void	createAmountDB( std::ifstream &fileName )
 			date.erase(4, 1);
 			date.erase(6, 1);
 			dateInt = std::atoi(date.c_str());
-			amountDB[dateInt] = std::stof(amount);
+			amountDB[dateInt] = std::stod(amount);
 		}
 	}
 	// std::cout << amountDB[20150713] << std::endl;
 }
 
-int		getExchangerate(int date)
+float		getExchangerate(int date)
 {
-    std::map<int, float>::iterator it = priceDB.lower_bound(date);
+    std::map<int, double>::iterator it = priceDB.lower_bound(date);
 
     if (it == priceDB.end())
         it--; // the key is greater than all the keys in the map
     else if (it != priceDB.begin() && date - (*(--it)).first < it->first - date)
         it--; // the key is closer to the previous key
-    return (it->first);
+    return (priceDB[it->first]);
 }
 
-void	getTradeVolume( std::ifstream &fileName, float volume )
+void	getTradeVolume( std::ifstream &fileName )
 {
 	std::string	tmp;
 	std::string	date;
@@ -118,9 +118,8 @@ void	getTradeVolume( std::ifstream &fileName, float volume )
 	std::string	amount;
 	int			delimiter;
 
-	int			exchangeRate;
+	double			exchangeRate;
 
-	std::cout << "Hallo" << std::endl;
 	while (getline(fileName, tmp))
 	{
 
@@ -140,31 +139,16 @@ void	getTradeVolume( std::ifstream &fileName, float volume )
 			date.erase(6, 1);
 			dateInt = std::atoi(date.c_str());
 			exchangeRate = getExchangerate(dateInt);
-			std::cout << (exchangeRate * volume)  << std::endl;
+			std::cout.precision(10);
+			// std::cout << "Date: " << tmp.substr(0, delimiter) << " -- exchangeRate: " << exchangeRate << " | amount: " << amount << std::endl;
+			// 2011-01-03 => 3 = 0.9
+			std::cout << tmp.substr(0, delimiter) << " => " << amount << " = " << exchangeRate << std::endl;
 		}
 	}
 }
 
 void	printResult( std::ifstream &priceFileName, std::ifstream &amountFileName  )
 {
-	// float	price;
-	// float	amount;
-
-	// run through vector
-	// find date of input file in price database
-		// if you can't find it, choose the closest one
-	// multiply that price with the traded amount
-	// print it
-
 	createPriceDB(priceFileName);
-	createAmountDB(amountFileName);
-
-	for (size_t k = 0; k < amountDB.size(); k++)
-	{
-		float volume = amountDB[20150713];
-		getTradeVolume(priceFileName, volume);
-		// std::cout << getTradeVolume(priceFileName, volume) << std::endl;
-		// if (std::stof(amount) < 0.0 || std::stof(amount) > 1000.0)
-		// 	std::cout << "Rate out of range" << std::endl;
-	}
+	getTradeVolume(amountFileName);
 }
