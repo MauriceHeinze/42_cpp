@@ -9,8 +9,6 @@
 #include <cstdlib>
 #include <ctime>
 
-void	createPriceDB( std::ifstream &fileName );
-void 	createAmountDB( std::ifstream &fileName );
 void	printResult( std::ifstream &priceFileName, std::ifstream &amountFileName );
 
 class InvalidDate : public std::exception {
