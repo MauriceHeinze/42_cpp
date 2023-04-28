@@ -11,26 +11,4 @@
 
 void	printResult( std::ifstream &priceFileName, std::ifstream &amountFileName );
 
-class InvalidDate : public std::exception {
-	public:
-		virtual const char* what() const throw()
-		{
-			return ("Invalid Date!");
-		};
-};
-class InvalidValue : public std::exception {
-	public:
-		virtual const char* what() const throw()
-		{
-			return ("Invalid Value!");
-		};
-};
-class BadInput : public std::exception {
-	public:
-		virtual const char* what() const throw()
-		{
-			return ("Bad Input!");
-		};
-};
-
 #endif
