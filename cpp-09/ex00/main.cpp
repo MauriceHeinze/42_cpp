@@ -2,19 +2,8 @@
 
 int main(int argc, char *argv[])
 {
-	// 1. read in file with prices
-	// 2. read in file with amount of traded bitcoins
-	// 3. Check each line for correct format -> date | value
-	// 		- valid date format: Year-Month-Day
-	// 		- valid value: float or a positive integer between 0 and 1000
-	// 4. if correct format, multiply with traded amount
-	// 		- if date does not exist in db, find closest date. Use the lower and not the upper one.
-	// 5. else throw error that format is invalid
-
 	if (argc != 2)
-	{
-		std::cout << "Please input file!" << std::endl;
-	}
+		std::cout << "\033[1;31mError:\033[0m could not open file." << std::endl;
 	else
 	{
 		std::ifstream priceFile("data.csv");

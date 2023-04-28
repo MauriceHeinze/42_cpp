@@ -7,7 +7,7 @@ std::map<int, double> amountDB;
 
 bool	checkDate(std::string date)
 {
-	// std::cout << date << "|" << date.length() << std::endl;
+	// std::cout << date << " === " << date.length() << std::endl;
 	if (date.find_first_not_of("0123456789-") != std::string::npos)
 		return (false);
 	if (date.substr(0, 4).find_first_not_of("0123456789") != std::string::npos)
@@ -20,11 +20,34 @@ bool	checkDate(std::string date)
 		return (false);
 	if (date[4] != '-' || date[7] != '-')
 		return (false);
+
+	int month = std::stoi(date.substr(5, 2));
+	int day = std::stoi(date.substr(8));
+
+	if (month < 1 || month > 12)
+	{
+		if (month % 2 == 0) // Feb, Apr, Jun
+		{
+			if ((day < 1 || day > 31) && month != 2)
+				return (false);
+			else if ((day < 1 || day > 28) && month == 2)
+				return (false);
+		}
+		else if (month % 2 == 1) // Jan, Mar, May
+		{
+			if ((day < 1 || day > 30))
+				return (false);
+		}
+		return (false);
+	}
+
 	return (true);
 }
 
 bool	checkPrice(std::string price)
 {
+	double priceDouble = std::stod(price);
+
 	// std::cout << price << "|" << std::endl;
 	if (price.length() == 0)
 		return (false);
@@ -33,6 +56,10 @@ bool	checkPrice(std::string price)
 	if (std::count(price.begin(), price.end(), '.') > 1)
 		return (false);
 	if (std::count(price.begin(), price.end(), '.') > 1)
+		return (false);
+	if (priceDouble > 1000)
+		return (false);
+	if (priceDouble < 0)
 		return (false);
 	return (true);
 }
@@ -68,57 +95,64 @@ void	createPriceDB( std::ifstream &fileName )
 	// std::cout << priceDB[20150713] << std::endl;
 }
 
-void	createAmountDB( std::ifstream &fileName )
+float		getExchangerate(std::string date)
 {
-	std::string	tmp;
-	std::string	date;
-	int			dateInt;
-	std::string	amount;
-	int			delimiter;
-
-	while (getline(fileName, tmp))
-	{
-		delimiter = tmp.find(" | ");
-		date = tmp.substr(0, delimiter);
-		amount = tmp.substr(delimiter + 3);
-
-		if (checkDate(date) == false && checkPrice(amount) == false)
-			amountDB[-1] = -1;
-		else if (checkDate(date) == false)
-			amountDB[-1] = 0;
-		else if (checkPrice(amount) == false) // in this case the traded amount
-			amountDB[0] = -1;
-		else // convert to int, so we can search container properly
-		{
-			date.erase(4, 1);
-			date.erase(6, 1);
-			dateInt = std::atoi(date.c_str());
-			amountDB[dateInt] = std::stod(amount);
-		}
-	}
-	// std::cout << amountDB[20150713] << std::endl;
-}
-
-float		getExchangerate(int date)
-{
-    std::map<int, double>::iterator it = priceDB.lower_bound(date);
+	date.erase(4, 1);
+	date.erase(6, 1);
+	int dateInt = std::atoi(date.c_str());
+    std::map<int, double>::iterator it = priceDB.lower_bound(dateInt);
 
     if (it == priceDB.end())
         it--; // the key is greater than all the keys in the map
-    else if (it != priceDB.begin() && date - (*(--it)).first < it->first - date)
+    else if (it != priceDB.begin() && dateInt - (*(--it)).first < it->first - dateInt)
         it--; // the key is closer to the previous key
+	// std::cout << "Test: " << priceDB[it->first] << std::endl;
     return (priceDB[it->first]);
+}
+
+bool	errorHandling(std::string date, std::string amount, double exchangeRate)
+{
+	if (checkDate(date) == false && checkPrice(amount) == false)
+	{
+		std::cout << "\033[1;31mError:\033[0m bad input! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		return (false);
+	}
+	else if (checkDate(date) == false)
+	{
+		std::cout << "\033[1;31mError:\033[0m invalid date! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		return (false);
+	}
+	else if (checkPrice(amount) == false) // in this case the traded amount
+	{
+		std::cout << "\033[1;31mError:\033[0m invalid volume! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		return (false);
+	}
+	else if (exchangeRate > 1000)
+	{
+		std::cout << "\033[1;31mError:\033[0m too large a number! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		return (false);
+	}
+	else if (exchangeRate == -1)
+	{
+		std::cout << "\033[1;31mError:\033[0m no data existing at this point of history yet! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		return (false);
+	}
+	else if (exchangeRate < 0)
+	{
+		std::cout << "\033[1;31mError:\033[0m not a positive number.! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		return (false);
+	}
+	return (true);
 }
 
 void	getTradeVolume( std::ifstream &fileName )
 {
 	std::string	tmp;
 	std::string	date;
-	int			dateInt;
 	std::string	amount;
 	int			delimiter;
 
-	double			exchangeRate;
+	double		exchangeRate;
 
 	while (getline(fileName, tmp))
 	{
@@ -126,22 +160,11 @@ void	getTradeVolume( std::ifstream &fileName )
 		delimiter = tmp.find(" | ");
 		date = tmp.substr(0, delimiter);
 		amount = tmp.substr(delimiter + 3);
+		exchangeRate = getExchangerate(date);
 
-		if (checkDate(date) == false && checkPrice(amount) == false)
-			std::cout << "Error: Invalid date and price!" << std::endl;
-		else if (checkDate(date) == false)
-			std::cout << "Error: Invalid date!" << std::endl;
-		else if (checkPrice(amount) == false) // in this case the traded amount
-			std::cout << "Error: Invalid volume!" << std::endl;
-		else // convert to int, so we can search container properly
+		if (errorHandling(date, amount, exchangeRate))
 		{
-			date.erase(4, 1);
-			date.erase(6, 1);
-			dateInt = std::atoi(date.c_str());
-			exchangeRate = getExchangerate(dateInt);
 			std::cout.precision(10);
-			// std::cout << "Date: " << tmp.substr(0, delimiter) << " -- exchangeRate: " << exchangeRate << " | amount: " << amount << std::endl;
-			// 2011-01-03 => 3 = 0.9
 			std::cout << tmp.substr(0, delimiter) << " => " << amount << " = " << exchangeRate << std::endl;
 		}
 	}
