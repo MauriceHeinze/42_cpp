@@ -14,7 +14,7 @@ RPN::RPN( const RPN& src )
 RPN& RPN::operator=( const RPN &src ) {
 	// std::cout << "Assignment operator called for RPN" << std::endl;
 	if (this != &src)
-		*this = src;
+		input = src.input;
 	return *this;
 }
 
@@ -36,15 +36,14 @@ void RPN::executeRNP( void )
 		if (c == '+' || c == '-' || c == '*' || c == '/')
 		{
 			// check if enough numbers are available
-			if (numbers.size() != 2)
+			if (numbers.size() < 2)
 			{
 				std::cout << "\033[1;31mError:\033[0m no valid Polish mathematical expression provided." << std::endl;
 				return ;
 			}
-			int a = numbers.top();
-			numbers.pop();
 			int b = numbers.top();
-			// std::cout << b << std::endl;
+			numbers.pop();
+			int a = numbers.top();
 			numbers.pop();
 			if (c == '+')
 				result = a + b;
