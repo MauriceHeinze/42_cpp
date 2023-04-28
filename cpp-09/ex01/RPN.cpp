@@ -27,15 +27,12 @@ void RPN::executeRNP( void )
 {
 	int result = 0;
 
-	// std::cout << input << std::endl;
     for (size_t i = 0; i < input.length(); i++) 
 	{
-        // std::cout << input[i] << " ";
 		char c = input[i];
 
 		if (c == '+' || c == '-' || c == '*' || c == '/')
 		{
-			// check if enough numbers are available
 			if (numbers.size() < 2)
 			{
 				std::cout << "\033[1;31mError:\033[0m no valid Polish mathematical expression provided." << std::endl;
@@ -54,9 +51,6 @@ void RPN::executeRNP( void )
 			else if (c == '/')
 				result = a / b;
 			numbers.push(result);
-			// std::cout << result << std::endl;
-			// do operation
-
 		}
 		else if (c >= 48 && c <= 57) // add number to stack
 		{
@@ -72,9 +66,4 @@ void RPN::executeRNP( void )
 		}
 	}
 	std::cout << result << std::endl;
-
-	// iterate over string
-	// when you find operator, do something
-	// when you find number, do something else
-
 }
