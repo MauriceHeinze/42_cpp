@@ -1,65 +1,58 @@
 #include "PmergeMe.hpp"
 
-bool isNumber(std::string s)
+std::vector<unsigned int> initializeVector(char** numStr)
 {
-	return (s.find_first_not_of("0123456789") == std::string::npos && s.size());
-}
-
-std::vector<unsigned int> initVec(char** numStr)
-{
-	int i = -1;
-	std::vector<unsigned int> tmp;
+    std::string                 tmpString;
+	std::vector<unsigned int>   tmpVector;
+	int                         i = -1;
 
 	while (numStr[++i])
 	{
-		if (!isNumber(numStr[i]))
-			throw ParsingException("Error");
-		tmp.push_back(atoi(numStr[i]));
-		if (tmp.back() != atol(numStr[i]))
-			throw ParsingException("Error: unsigned int overflow");
+        tmpString = numStr[i];
+		if (tmpString.find_first_not_of("0123456789") != std::string::npos)
+			throw ParsingException("Error: Not a number!");
+		tmpVector.push_back(std::stoi(tmpString));
+		if (tmpVector.back() != std::stol(tmpString))
+			throw ParsingException("Error: Not an integer anymore!");
 	}
-	return (tmp);
+	return (tmpVector);
 }
 
-void	insertSort(std::vector<unsigned int>& vec)
+void insertSort(std::vector<unsigned int>& nbrs)
 {
-	size_t size = vec.size();
-
-	size_t i = -1;
-	while (++i < size)
-	{
-		size_t j = i;
-		while (j < size && vec[j] >= vec[i])
-			j++;
-		if (j < size)
-		{
-			int tmp = vec[j];
-			vec.erase(vec.begin() + j);
-			vec.insert(vec.begin() + i, tmp);
-			i = -1;
-		}
-	}
+    size_t size = nbrs.size();
+    
+    for (size_t i = 1; i < size; ++i) {
+        unsigned int key = nbrs[i];
+        int j = i - 1;
+        while (j >= 0 && nbrs[j] > key) {
+            nbrs[j + 1] = nbrs[j];
+            j--;
+        }
+        nbrs[j + 1] = key;
+    }
 }
 
-void mergeInsertSort (std::vector<unsigned int>& vec)
+void mergeInsertSort(std::vector<unsigned int>& vec)
 {
-	if (vec.size() > 5)
-	{
-		std::vector<unsigned int> part1(vec.begin(), vec.begin() + ((vec.size() + 1)/2));
-		std::vector<unsigned int> part2(vec.begin() + ((vec.size() + 1)/2), vec.end());
+    if (vec.size() > 5)
+    {
+        std::vector<unsigned int>::iterator middle = vec.begin() + ((vec.size() + 1) / 2);
+        std::vector<unsigned int> firstPart(vec.begin(), middle);
+        std::vector<unsigned int> secondPart(middle, vec.end());
 
-		mergeInsertSort(part1);
-		mergeInsertSort(part2);
-		std::merge(part1.begin(), part1.end(), part2.begin(), part2.end(), vec.begin());
-	}
-	else
-		insertSort(vec);
+        mergeInsertSort(firstPart);
+        mergeInsertSort(secondPart);
+        std::merge(firstPart.begin(), firstPart.end(), secondPart.begin(), secondPart.end(), vec.begin());
+    }
+    else
+        insertSort(vec);
 }
 
 int Pmerge (char** numStr)
 {
 	try {
-		std::vector<unsigned int> vec = initVec(numStr);
+		std::vector<unsigned int> vec = initializeVector(numStr);
 
 		std::cout << "Before:   ";
 		for (std::vector<unsigned int>::iterator it = vec.begin(); it != vec.end(); it++)
