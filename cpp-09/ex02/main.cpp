@@ -1,7 +1,7 @@
 #include "PmergeMe.hpp"
 
 template<typename Container>
-void initContainer(Container& container, char** numStr)
+void    initContainer(Container& container, char** numStr)
 {
     std::string                 tmpString;
 	int                         i = -1;
@@ -18,7 +18,7 @@ void initContainer(Container& container, char** numStr)
 }
 
 template<typename Container>
-void insertSort(Container& container)
+void    insertSort(Container& container)
 {
     size_t size = container.size();
     
@@ -34,7 +34,7 @@ void insertSort(Container& container)
 }
 
 template<typename Container>
-void mergeInsertSort(Container& container)
+void    mergeInsertSort(Container& container)
 {
     if (container.size() > 5)
     {
@@ -50,6 +50,44 @@ void mergeInsertSort(Container& container)
         insertSort(container);
 }
 
+void    runVector(std::vector<unsigned int>& vec)
+{
+    std::cout << "\033[1;31mBefore:\033[0m:   ";
+    for (std::vector<unsigned int>::iterator it = vec.begin(); it != vec.end(); it++)
+        std::cout << " " << *it;
+    std::cout << std::endl;
+
+    clock_t start = clock();
+    mergeInsertSort(vec);
+    clock_t end = clock();
+    long timeTaken = (end - start) * 1000000 / CLOCKS_PER_SEC;
+
+    std::cout << "\033[1;32mBefore:\033[0m:   ";
+    for (std::vector<unsigned int>::iterator it = vec.begin(); it != vec.end(); it++)
+        std::cout << " " << *it;
+
+    std::cout << "\nTime to process a range of " << vec.size() << " elements with std::vector: " << timeTaken << " microseconds" << std::endl;
+}
+
+void    runDequeue(std::deque<unsigned int>& deq)
+{
+    
+    std::cout << "\033[1;31mBefore:\033[0m:   ";
+    for (std::deque<unsigned int>::iterator it = deq.begin(); it != deq.end(); it++)
+        std::cout << " " << *it;
+    std::cout << std::endl;
+
+    clock_t start = clock();
+    mergeInsertSort(deq);
+    clock_t end = clock();
+    long timeTaken = (end - start) * 1000000 / CLOCKS_PER_SEC;
+
+    std::cout << "\033[1;32mBefore:\033[0m:   ";
+    for (std::deque<unsigned int>::iterator it = deq.begin(); it != deq.end(); it++)
+        std::cout << " " << *it;
+    std::cout << "\nTime to process a range of " << deq.size() << " elements with std::deque: " << timeTaken << " microseconds" << std::endl;
+}
+
 int Pmerge (char** numStr)
 {
 	try {
@@ -59,39 +97,10 @@ int Pmerge (char** numStr)
         initContainer(vec, numStr);
         initContainer(deq, numStr);
 
-		std::cout << "Before:   ";
-		for (std::vector<unsigned int>::iterator it = vec.begin(); it != vec.end(); it++)
-			std::cout << " " << *it;
-		std::cout << std::endl;
+        runVector(vec);
+        std::cout << std::endl;
+        runDequeue(deq);
 
-		clock_t start = clock();
-		mergeInsertSort(vec);
-		clock_t end = clock();
-
-		std::cout << "After:    ";
-		for (std::vector<unsigned int>::iterator it = vec.begin(); it != vec.end(); it++)
-			std::cout << " " << *it;
-		std::cout << std::endl;
-
-        std::cout.precision(10);
-		std::cout << "Time to process a range of " << vec.size() << " elements with std::vector : " << static_cast<double>(end - start) / CLOCKS_PER_SEC << " us" << std::endl;
-
-        std::cout << "Before:   ";
-		for (std::deque<unsigned int>::iterator it = deq.begin(); it != deq.end(); it++)
-			std::cout << " " << *it;
-		std::cout << std::endl;
-
-		clock_t start1 = clock();
-		mergeInsertSort(deq);
-		clock_t end1 = clock();
-
-		std::cout << "After:    ";
-		for (std::deque<unsigned int>::iterator it = deq.begin(); it != deq.end(); it++)
-			std::cout << " " << *it;
-		std::cout << std::endl;
-
-		std::cout << "Time to process a range of " << deq.size() << " elements with std::deque : " << static_cast<double>(end1 - start1 / CLOCKS_PER_SEC) << " us" << std::endl;
-        
         return (0);
 	}
 	catch (std::exception &e) {

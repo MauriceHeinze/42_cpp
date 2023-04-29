@@ -27,6 +27,7 @@
 # include <deque>
 # include <cstdlib>
 # include <algorithm>
+# include <iomanip>
 
 class ParsingException : public std::exception
 {
