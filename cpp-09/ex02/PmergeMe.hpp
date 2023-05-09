@@ -29,19 +29,15 @@ class PmergeMe
 		void    runDequeue(std::deque<unsigned int>& deq);
 };
 
-class ParsingException : public std::exception
+class ErrorMessage : public std::exception
 {
-	std::string	_msg;
+	std::string	message;
 
-public:
-	ParsingException(const std::string msg)	: _msg(msg)	{}
+	public:
+		ErrorMessage(const std::string msg)	: message(msg)	{}
+		~ErrorMessage() throw()	{}
 
-	~ParsingException() throw()	{}
-
-	virtual const char*	what(void) const throw()
-	{
-		return _msg.c_str();
-	}
+	virtual const char*	what(void) const throw() { return message.c_str(); }
 };
 
 #endif

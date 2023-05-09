@@ -53,12 +53,12 @@ void    PmergeMe::initContainer(Container& container, char** numStr)
 	{
         tmpString = numStr[i];
 		if (tmpString.find_first_not_of("0123456789") != std::string::npos)
-			throw ParsingException("\033[1;31mError:\033[0m Not a number!");
+			throw ErrorMessage("\033[1;31mError:\033[0m Not a number!");
 		if (tmpString.length() == 0)
-			throw ParsingException("\033[1;31mError:\033[0m Invalid Arguments!");
+			throw ErrorMessage("\033[1;31mError:\033[0m Invalid Arguments!");
         container.push_back(std::stoi(tmpString));
 		if (container.back() != std::stol(tmpString))
-			throw ParsingException("\033[1;31mError:\033[0m Not an integer anymore!");
+			throw ErrorMessage("\033[1;31mError:\033[0m Not an integer anymore!");
 	}
 }
 

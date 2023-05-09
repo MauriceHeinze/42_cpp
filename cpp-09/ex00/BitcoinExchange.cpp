@@ -1,11 +1,30 @@
 #include "BitcoinExchange.hpp"
 
-std::map<int, double> priceDB;
-std::map<int, double> amountDB;
+BitcoinExchange::BitcoinExchange( std::ifstream &priceFileName, std::ifstream &amountFileName )
+{
+	// std::cout << "BitcoinExchange constructed!" << std::endl;
+	printResult(priceFileName, amountFileName);
+}
 
-// struct tm date;
+BitcoinExchange::BitcoinExchange( const BitcoinExchange& src )
+{
+	// std::cout << "Copy operator called for BitcoinExchange" << std::endl;
+	*this = src;
+}
 
-bool	checkDate(std::string date)
+BitcoinExchange& BitcoinExchange::operator=( const BitcoinExchange &src ) {
+	(void) src;
+	// std::cout << "Assignment operator called for BitcoinExchange" << std::endl;
+	// if (this != &src)
+	// 	input = src.input;
+	return *this;
+}
+
+BitcoinExchange::~BitcoinExchange( void )
+{
+	// std::cout << "RPN destructed!" << std::endl;
+}
+bool	BitcoinExchange::checkDate(std::string date)
 {
 	// std::cout << date << " === " << date.length() << std::endl;
 	if (date.find_first_not_of("0123456789-") != std::string::npos)
@@ -44,7 +63,7 @@ bool	checkDate(std::string date)
 	return (true);
 }
 
-bool	checkPrice(std::string price)
+bool	BitcoinExchange::checkPrice(std::string price)
 {
 	double priceDouble = std::stod(price);
 
@@ -64,7 +83,7 @@ bool	checkPrice(std::string price)
 	return (true);
 }
 
-void	createPriceDB( std::ifstream &fileName )
+void	BitcoinExchange::createPriceDB( std::ifstream &fileName )
 {
 	std::string	tmp;
 	std::string	date;
@@ -95,7 +114,7 @@ void	createPriceDB( std::ifstream &fileName )
 	// std::cout << priceDB[20150713] << std::endl;
 }
 
-float		getExchangerate(std::string date)
+float	BitcoinExchange::getExchangerate(std::string date)
 {
 	date.erase(4, 1);
 	date.erase(6, 1);
@@ -110,7 +129,7 @@ float		getExchangerate(std::string date)
     return (priceDB[it->first]);
 }
 
-bool	errorHandling(std::string date, std::string amount, double exchangeRate)
+bool	BitcoinExchange::errorHandling(std::string date, std::string amount, double exchangeRate)
 {
 	if (checkDate(date) == false && checkPrice(amount) == false)
 	{
@@ -145,7 +164,7 @@ bool	errorHandling(std::string date, std::string amount, double exchangeRate)
 	return (true);
 }
 
-void	getTradeVolume( std::ifstream &fileName )
+void	BitcoinExchange::getTradeVolume( std::ifstream &fileName )
 {
 	std::string	tmp;
 	std::string	date;
@@ -170,7 +189,7 @@ void	getTradeVolume( std::ifstream &fileName )
 	}
 }
 
-void	printResult( std::ifstream &priceFileName, std::ifstream &amountFileName  )
+void	BitcoinExchange::printResult( std::ifstream &priceFileName, std::ifstream &amountFileName  )
 {
 	createPriceDB(priceFileName);
 	getTradeVolume(amountFileName);

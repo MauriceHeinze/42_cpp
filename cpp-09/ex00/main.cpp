@@ -8,7 +8,8 @@ int main(int argc, char *argv[])
 	{
 		std::ifstream priceFile("data.csv");
 		std::ifstream inputFile(argv[1]);
-		printResult(priceFile, inputFile);
+
+		BitcoinExchange exchange(priceFile, inputFile);
 	}
 
 	return 0;
