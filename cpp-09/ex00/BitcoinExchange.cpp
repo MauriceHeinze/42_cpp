@@ -9,21 +9,28 @@ BitcoinExchange::BitcoinExchange( std::ifstream &priceFileName, std::ifstream &a
 BitcoinExchange::BitcoinExchange( const BitcoinExchange& src )
 {
 	// std::cout << "Copy operator called for BitcoinExchange" << std::endl;
-	*this = src;
+	if (this != &src)
+	{
+		priceDB = src.priceDB;
+    	amountDB = src.amountDB;
+	}
 }
 
 BitcoinExchange& BitcoinExchange::operator=( const BitcoinExchange &src ) {
-	(void) src;
 	// std::cout << "Assignment operator called for BitcoinExchange" << std::endl;
-	// if (this != &src)
-	// 	input = src.input;
-	return *this;
+	if (this != &src) // check for self-assignment
+    {
+        priceDB = src.priceDB;
+        amountDB = src.amountDB;
+    }
+    return *this;
 }
 
 BitcoinExchange::~BitcoinExchange( void )
 {
 	// std::cout << "RPN destructed!" << std::endl;
 }
+
 bool	BitcoinExchange::checkDate(std::string date)
 {
 	// std::cout << date << " === " << date.length() << std::endl;

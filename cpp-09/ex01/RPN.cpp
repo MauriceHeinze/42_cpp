@@ -8,13 +8,20 @@ RPN::RPN(std::string input) : input(input)
 RPN::RPN( const RPN& src )
 {
 	// std::cout << "Copy operator called for RPN" << std::endl;
-	*this = src;
+	if (this != &src)
+	{
+		input = src.input;
+		numbers = src.numbers;
+	}
 }
 
 RPN& RPN::operator=( const RPN &src ) {
 	// std::cout << "Assignment operator called for RPN" << std::endl;
 	if (this != &src)
+	{
 		input = src.input;
+		numbers = src.numbers;
+	}
 	return *this;
 }
 
@@ -35,7 +42,7 @@ void RPN::executeRNP( void )
 		{
 			if (numbers.size() < 2)
 			{
-				std::cout << "\033[1;31mError:\033[0m no valid Polish mathematical expression provided." << std::endl;
+				std::cout << "\033[1;31mError:\033[0m no valid Polish mathematical expression provided. Provide it like this: ./RPN \"2 2 *\"" << std::endl;
 				return ;
 			}
 			int b = numbers.top();
@@ -61,7 +68,7 @@ void RPN::executeRNP( void )
 			continue;
 		else
 		{
-			std::cout << "\033[1;31mError:\033[0m no valid Polish mathematical expression provided." << std::endl;
+			std::cout << "\033[1;31mError:\033[0m no valid Polish mathematical expression provided. Provide it like this: ./RPN \"2 2 *\"" << std::endl;
 			return ;
 		}
 	}

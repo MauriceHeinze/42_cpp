@@ -21,7 +21,7 @@
 int main(int argc, char *argv[])
 {
 	if (argc != 2)
-		std::cout << "\033[1;31mError:\033[0m no inverted Polish mathematical expression provided." << std::endl;
+		std::cout << "\033[1;31mError:\033[0m no inverted Polish mathematical expression provided. Provide it like this: ./RPN \"2 2 *\"" << std::endl;
 	else
 	{
 		RPN calculator(argv[1]);
