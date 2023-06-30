@@ -3,6 +3,7 @@
 BitcoinExchange::BitcoinExchange( std::ifstream &priceFileName, std::ifstream &amountFileName )
 {
 	// std::cout << "BitcoinExchange constructed!" << std::endl;
+	createPriceDB(priceFileName);
 	printResult(priceFileName, amountFileName);
 }
 
@@ -178,6 +179,7 @@ void	BitcoinExchange::getTradeVolume( std::ifstream &fileName )
 	std::string	amount;
 	int			delimiter;
 
+	double		volume;
 	double		exchangeRate;
 
 	while (getline(fileName, tmp))
@@ -187,11 +189,12 @@ void	BitcoinExchange::getTradeVolume( std::ifstream &fileName )
 		date = tmp.substr(0, delimiter);
 		amount = tmp.substr(delimiter + 3);
 		exchangeRate = getExchangerate(date);
+		volume = exchangeRate * (std::stod(amount));
 
 		if (errorHandling(date, amount, exchangeRate))
 		{
-			std::cout.precision(10);
-			std::cout << tmp.substr(0, delimiter) << " => " << amount << " = " << exchangeRate << std::endl;
+			std::cout.precision(6);
+			std::cout << tmp.substr(0, delimiter) << " => " << amount << " = " << volume << std::endl;
 		}
 	}
 }
