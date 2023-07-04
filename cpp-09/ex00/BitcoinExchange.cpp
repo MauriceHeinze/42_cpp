@@ -13,18 +13,18 @@ BitcoinExchange::BitcoinExchange( const BitcoinExchange& src )
 	if (this != &src)
 	{
 		priceDB = src.priceDB;
-    	amountDB = src.amountDB;
+		amountDB = src.amountDB;
 	}
 }
 
 BitcoinExchange& BitcoinExchange::operator=( const BitcoinExchange &src ) {
 	// std::cout << "Assignment operator called for BitcoinExchange" << std::endl;
 	if (this != &src) // check for self-assignment
-    {
-        priceDB = src.priceDB;
-        amountDB = src.amountDB;
-    }
-    return *this;
+	{
+		priceDB = src.priceDB;
+		amountDB = src.amountDB;
+	}
+	return *this;
 }
 
 BitcoinExchange::~BitcoinExchange( void )
@@ -34,6 +34,9 @@ BitcoinExchange::~BitcoinExchange( void )
 
 bool	BitcoinExchange::checkDate(std::string date)
 {
+	int month;
+	int day;
+
 	// std::cout << date << " === " << date.length() << std::endl;
 	if (date.find_first_not_of("0123456789-") != std::string::npos)
 		return (false);
@@ -48,34 +51,33 @@ bool	BitcoinExchange::checkDate(std::string date)
 	if (date[4] != '-' || date[7] != '-')
 		return (false);
 
-	int month = std::stoi(date.substr(5, 2));
-	int day = std::stoi(date.substr(8));
+	month = std::stoi(date.substr(5, 2));
+	day = std::stoi(date.substr(8));
 
-	if (month < 1 || month > 12)
+	if (month >= 1 && month <= 12)
 	{
-		if (month % 2 == 0) // Feb, Apr, Jun
+		if (month % 2 == 1) // Jan, Mar, May
+		{
+			if ((day < 1 || day > 30))
+				return (false);
+		}
+		else if (month % 2 == 0) // Feb, Apr, Jun
 		{
 			if ((day < 1 || day > 31) && month != 2)
 				return (false);
 			else if ((day < 1 || day > 28) && month == 2)
 				return (false);
 		}
-		else if (month % 2 == 1) // Jan, Mar, May
-		{
-			if ((day < 1 || day > 30))
-				return (false);
-		}
-		return (false);
+		return (true);
 	}
-
-	return (true);
+	else
+		return (false);
 }
 
 bool	BitcoinExchange::checkPrice(std::string price)
 {
 	double priceDouble = std::stod(price);
 
-	// std::cout << price << "|" << std::endl;
 	if (price.length() == 0)
 		return (false);
 	if (price.find_first_not_of("0123456789.") != std::string::npos)
@@ -99,6 +101,7 @@ void	BitcoinExchange::createPriceDB( std::ifstream &fileName )
 	std::string	price;
 	int			comma;
 
+	getline(fileName, tmp);
 	while (getline(fileName, tmp))
 	{
 		comma = tmp.find(',');
@@ -119,7 +122,6 @@ void	BitcoinExchange::createPriceDB( std::ifstream &fileName )
 			priceDB[dateInt] = std::stod(price);
 		}
 	}
-	// std::cout << priceDB[20150713] << std::endl;
 }
 
 float	BitcoinExchange::getExchangerate(std::string date)
@@ -127,46 +129,58 @@ float	BitcoinExchange::getExchangerate(std::string date)
 	date.erase(4, 1);
 	date.erase(6, 1);
 	int dateInt = std::atoi(date.c_str());
-    std::map<int, double>::iterator it = priceDB.lower_bound(dateInt);
 
-    if (it == priceDB.end())
-        it--; // the key is greater than all the keys in the map
-    else if (it != priceDB.begin() && dateInt - (*(--it)).first < it->first - dateInt)
-        it--; // the key is closer to the previous key
-	// std::cout << "Test: " << priceDB[it->first] << std::endl;
-    return (priceDB[it->first]);
+	std::map<int, double>::iterator it = priceDB.lower_bound(dateInt);
+
+	if (it == priceDB.end()) // date is greater than all stored in container
+		it--; // decrement to get last element
+	return (priceDB[it->first]);
 }
 
 bool	BitcoinExchange::errorHandling(std::string date, std::string amount, double exchangeRate)
 {
-	if (checkDate(date) == false && checkPrice(amount) == false)
+	double amountDouble = std::stod(amount);
+
+	if (exchangeRate > 1000)
 	{
-		std::cout << "\033[1;31mError:\033[0m bad input! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		std::cout << "\033[1;31mError:\033[0m too large a number!"
+			<< "\033[1m	#exchangeRate: \033[0m" << exchangeRate << std::endl;
 		return (false);
 	}
-	else if (checkDate(date) == false)
+	else if (amountDouble > 1000)
 	{
-		std::cout << "\033[1;31mError:\033[0m invalid date! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		std::cout << "\033[1;31mError:\033[0m too large a number!"
+			<< "\033[1m	#amount: \033[0m" << amountDouble << std::endl;
 		return (false);
 	}
-	else if (checkPrice(amount) == false) // in this case the traded amount
+	else if (amountDouble < 0)
 	{
-		std::cout << "\033[1;31mError:\033[0m invalid volume! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		std::cout << "\033[1;31mError:\033[0m not a positive number!"
+			<< "\033[1m	#amount: \033[0m" << amountDouble << std::endl;
 		return (false);
 	}
-	else if (exchangeRate > 1000)
+	else if (checkPrice(amount) == false)
 	{
-		std::cout << "\033[1;31mError:\033[0m too large a number! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		std::cout << "\033[1;31mError:\033[0m amount is not valid!"
+			<< "\033[1m	#amount: \033[0m" << amount << std::endl;
 		return (false);
 	}
 	else if (exchangeRate == -1)
 	{
-		std::cout << "\033[1;31mError:\033[0m no data existing at this point of history yet! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		std::cout << "\033[1;31mError:\033[0m no data existing at this point of history yet!"
+			<< "\033[1m	#Date: \033[0m" << date << std::endl;
 		return (false);
 	}
 	else if (exchangeRate < 0)
 	{
-		std::cout << "\033[1;31mError:\033[0m not a positive number.! Input was: #Date " << date << " #amount " << amount << " #exchangeRate " << exchangeRate << std::endl;
+		std::cout << "\033[1;31mError:\033[0m not a positive number!"
+			<< "\033[1m	#ExchangeRate: \033[0m" << exchangeRate << std::endl;
+		return (false);
+	}
+	else if (checkDate(date) == false)
+	{
+		std::cout << "\033[1;31mError:\033[0m invalid date!"
+			<< "\033[1m	#Date: \033[0m" << date << std::endl;
 		return (false);
 	}
 	return (true);
@@ -182,15 +196,21 @@ void	BitcoinExchange::getTradeVolume( std::ifstream &fileName )
 	double		volume;
 	double		exchangeRate;
 
+	getline(fileName, tmp);
 	while (getline(fileName, tmp))
 	{
-
 		delimiter = tmp.find(" | ");
 		date = tmp.substr(0, delimiter);
+		if (!checkDate(date))
+		{
+			std::cout << "\033[1;31mError:\033[0m invalid date!"
+			<< "\033[1m	#Date: \033[0m" << date << std::endl;
+			continue;
+		}
 		amount = tmp.substr(delimiter + 3);
 		exchangeRate = getExchangerate(date);
+		// std::cout << tmp << " => " << std::endl;
 		volume = exchangeRate * (std::stod(amount));
-
 		if (errorHandling(date, amount, exchangeRate))
 		{
 			std::cout.precision(6);
